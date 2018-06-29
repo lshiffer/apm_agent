@@ -1,1 +1,87 @@
 
+body {
+	margin: 0;
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto'), local('Roboto-Regular'), url("https://fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu4mxP.ttf") format('truetype');
+}
+
+#header {
+	width: 100%;
+    height: 40px;
+    font-family: roboto;
+    font-weight: bold;
+    color: #4ec0b0;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: white;
+    margin-bottom: 20px;
+    border-bottom: 1px outset #4ec0b0;
+}
+
+#content {
+    max-width: 1000px;
+    min-height: 250px;
+    padding: 5px;
+    margin: auto;
+    background-color: #4ec0b0;
+    color: white;
+    font-family: roboto;
+}
+
+#about {
+    border-bottom: 1px inset white;
+    padding: 5px;
+}
+
+#events {
+	font-size: 12px;
+    color: black;
+    margin-top: 5px;
+}
+
+.label {
+	float: left;
+    overflow: hidden;
+    background-color: white;
+    margin: 5px;
+    padding: 5px;
+    text-align: center;
+}
+
+.label.uuid {
+	width: 240px;
+}
+
+.label.dateTime {
+	width: 150px;
+}
+
+.label.url {
+	width: 180px;
+}
+
+.label.method {
+    width: 40px;
+}
+
+.label.duration {
+	width: 100px;
+}
+
+.label.strings {
+	width: 50px;
+}
+
+.label.memoryUsage {
+    width: 100px;
+}
+
+.legend {
+	color: #ffffff;
+	background-color: #009b86;
+	font-size: 12px;
+}
