@@ -1,0 +1,33 @@
+<html>
+	<head>	
+		<meta charset="utf-8" />
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	    <meta name="HandheldFriendly" content="True" />
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<title>APM Agent Viewer</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.slim.js"></script>
+
+		<script src="/scripts/main.js"></script>
+
+		<link rel="stylesheet" href="/styles/styles.css">
+	</head>
+
+	<body>
+
+		<div id="header"> APM Agent Viewer </div>
+
+		<div id="content">
+			<div id="about"> Events will be logged here as they happen </div>
+
+			<div id="events"></div>
+
+		</div>
+	</body>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', function(){
+			init();
+		});
+	</script>
+</html>

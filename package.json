@@ -1,0 +1,22 @@
+{
+  "name": "apm_agent",
+  "version": "0.0.1",
+  "description": "Foundation for live application monitoring",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha testSuite --exit",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.13.3",
+    "socket.io": "^2.1.1",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0",
+    "node-fetch": "^2.1.2"
+  }
+}
