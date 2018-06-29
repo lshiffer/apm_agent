@@ -24,11 +24,13 @@ Where ```path to apm_agent``` is the root directory of apm_agent and ```script t
 For instance, if you usually run your webapp with ```node index.js``` you would instead do ```node -r ./../apm_agent/ index.js```.
 
 ####  2)  Require the Agent first thing within your webapps entry file
-```require('./agent/index');```
+```require('./apm_agent');```
 
 Add that line to the top of your webapp's entry file.  To do even better, create an environment variable (or pass in a argument) that will enable/disable the agent:
 
-``` if (process.env.RUN_AGENT) { require('./agent/index'); } ```
+``` if (process.env.RUN_AGENT) { require('./apm_agent'); } ```
+
+Of course, be sure the path to the root ```apm_agent``` is correct.  For instance:  ```require('./../../apm_agent');```
 
 ##### Now that the agent is running...
 You can visit ```localhost:3100``` to view events as they happen.  To trigger an event, simply visit your webapp and click some links or call some APIs.  Be sure to substitute ```localhost``` for whatever the domain is running on. 
