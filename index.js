@@ -3,11 +3,6 @@ require('dotenv').config({
 	path: __dirname+'/.env'
 });
 
-/*
-	TO RUN WITH SERVER
-		node -r ./agent/index index.js
-*/
-
 const { spawn } = require('child_process');
 
 const sub = spawn(process.argv[0], [__dirname + '/server'], {
