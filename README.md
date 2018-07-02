@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/lshiffer/apm_agent.svg?branch=master)](https://travis-ci.com/lshiffer/apm_agent)
 
 # apm_agent
-A foundational platform to actively monitor Application Performance Management for Node. 
+A foundational platform to actively monitor Application Performance for Node. 
 
 ## Getting Started
 After cloning ```apm_agent``` to your target system follow the steps below....
@@ -21,7 +21,7 @@ There are two options to have ```apm_agent``` monitor your Node application.
 
 Where ```path to apm_agent``` is the root directory of apm_agent and ```script that starts your webapp``` is the entry point to your webapp.
 
-For instance, if you usually run your webapp with ```node index.js``` you would instead do ```node -r ./../apm_agent/ index.js```.
+For instance, if you usually run your webapp with ```node index.js```, and ```apm_agent``` is one directory out, you would instead do ```node -r ./../apm_agent/ index.js```.
 
 ####  2)  Require the Agent first thing within your webapps entry file
 ```require('./apm_agent');```
@@ -33,7 +33,7 @@ Add that line to the top of your webapp's entry file.  To do even better, create
 Of course, be sure the path to the root ```apm_agent``` is correct.  For instance:  ```require('./../../apm_agent');```
 
 #### Now that the agent is running...
-You can visit ```localhost:3100``` (or the APP_PORT set in ```.env```) to view events as they happen.  To trigger an event, simply visit your webapp and click some links or call some APIs.  Be sure to substitute ```localhost``` for whatever the domain is running on. 
+You can visit ```localhost:3100``` (or the APP_PORT set in ```.env```) to view events as they happen.  To trigger an event, simply visit your webapp and click some links or call some APIs.  Be sure to substitute ```localhost``` for whatever the domain is running on (set in ```.env```).
 
 You can also view the logs in ```agent_log.json``` located in the root directory of ```apm_agent```.
 
@@ -41,7 +41,7 @@ You can also view the logs in ```agent_log.json``` located in the root directory
 
 
 ##  About apm_agent 
-apm_agent is a foundation to build upon to monitor a Node applications performance management (as well as monitor for possible threats).  This foundation listens for http requests to capture data and instrument responses.  Each request is monitored to capture the total number of String objects that are created, the duration of request to response time, and how much memory is consumed to respond to the request.  Additionally, each request is instrumented to include a UUID.
+apm_agent is a foundation to build upon to monitor a Node applications performance (as well as monitor for possible threats).  This foundation listens for http requests to capture data and instrument responses.  Each request is monitored to capture the total number of String objects that are created, the duration of request to response time, and how much memory is consumed to respond to the request.  Additionally, each request is instrumented to include a UUID.
 
 ###  Technical Overview
 
@@ -66,7 +66,7 @@ Creates a proxy for the String construtor.  Each String object that is created w
 
 -  ```/instrumentation/modules/HttpServerEmit.js```
 
-Overrides Node's Http emit property.  Similar to how String.js uses a proxy to listen for the String object constructor, HttpServerEmit redefines the built-in ```http.Server.prototype.emit``` to capture each request that comes in.  For each request a UUID is assigned, an ```Agent_Data``` object is created for that request, and a measurement is started (with time duration being tracked using Node's built-in Performance Timing API.  Additionally, a callback is created for the http response...  Once the callback occurs, the measurements are stopped (to get the time duration) and the memory usage is captured.  Both are stored in the ```Agent_Data``` object. 
+Overrides Node's Http emit property.  Similar to how String.js uses a proxy to listen for the String object constructor, HttpServerEmit redefines the built-in ```http.Server.prototype.emit``` to capture each request that comes in.  For each request a UUID is assigned, an ```Agent_Data``` object is created for that request, and a measurement is started (with time duration being tracked using Node's built-in Performance Timing API).  Additionally, a callback is created for the http response...  Once the callback occurs, the measurements are stopped (to get the time duration) and the memory usage is captured.  Both are stored in the ```Agent_Data``` object. 
 
 -  ```/classes/Agent_Data.js```
 
