@@ -3,9 +3,9 @@
 const Fs = require('fs');
 const Path = require('path');
 const io = require('socket.io-client');
-const socket = io.connect('http://localhost:'+3200);
+const socket = io.connect('http://localhost:'+process.env.SOCKET_PORT);
 
-const LOG_FILE_NAME = 'agent_log.json';
+const LOG_FILE_NAME = process.env.LOG_FILE_NAME;
 
 class Measure {
 	constructor() {
@@ -17,7 +17,7 @@ class Measure {
 	}
 
 	startFileStream() {
-		this.output = Fs.createWriteStream('./' + LOG_FILE_NAME);
+		this.output = Fs.createWriteStream(__dirname + '/../' + LOG_FILE_NAME);
 		this.output.write('[\n');
 	}
 

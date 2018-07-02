@@ -1,5 +1,7 @@
 'use strict'; 
 
+const MEMORY_PRECISION = 4;
+
 class Agent_Data {
 	constructor(uuid, url, method) {
 		this.uuid = uuid;
@@ -11,7 +13,7 @@ class Agent_Data {
 	}
 
 	setMemoryUsage(usage) {
-		this.stats.memoryUsage = (((usage / 1024 / 1024 ) * 100) / 100).toFixed(4) + " MB";
+		this.stats.memoryUsage = (((usage / 1024 / 1024 ) * 100) / 100).toFixed(MEMORY_PRECISION) + " MB";
 	}
 
 	upStringCount() {

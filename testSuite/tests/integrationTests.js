@@ -8,6 +8,8 @@ const measure = require('./../../classes/Measure');
 var expect = require('chai').expect;
 var server;
 
+var port = process.env.APP_PORT;
+
 describe('Integration Testing', function() {
 	before(() => { 
 		require('./../../');
@@ -17,22 +19,32 @@ describe('Integration Testing', function() {
 	after(async () => { server.close(); });
 
 	it('Should mark GET responses with a UUID', async function() {
-		let r = await fetch('http://localhost:3000');
+		let r = await fetch('http://localhost:' + port);
 		expect(r.headers.get('uuid')).to.exist;
 	});
 
 	it('Should mark POST responses with a UUID', async function() {
-		let r = await fetch('http://localhost:3000', {
+		let r = await fetch('http://localhost:' + port, {
 			method: 'POST'
 		});
 		expect(r.headers.get('uuid')).to.exist;
 	});
 
-	// Essentially 6 tests in one.
-	it('Should log all data (6 tests in one)', async function() {
-		await fetch('http://localhost:3000');
+	// Essentially 5 tests in one.
+	/*
+		1)  Are logs being created?
+		2)  Is a new String object being captured (and logged)?
+		3)  Are no String objects logged when none are created?
+		4)  Is the memory usage being captured and logged?
+		5)  Is the duration from request to response being captured and logged?
+		6)  Is the UUID being logged? 
+
+	Reason for this 5-in-1 is to read the log file once. 
+	*/
+	it('Should log all data (5 tests in one)', async function() {
+		await fetch('http://localhost:' + port);
 		measure.closeFileStream();
-		let logs = await fs.readFileSync('./agent_log.json');
+		let logs = await fs.readFileSync('./' + process.env.LOG_FILE_NAME);
 		let data = JSON.parse(await logs.toString('utf8').slice(0, -2) + "]");
 		expect(data[data.length-1].stats.strings).to.be.equal(1);
 		expect(data[data.length-2].stats.strings).to.be.equal(0);
@@ -53,5 +65,5 @@ function setupServer() {
 		res.status(200).send('ok');
 	});
 
-	server = app.listen(3000);
+	server = app.listen(port);
 }

@@ -1,4 +1,7 @@
 'use strict';
+require('dotenv').config({
+	path: __dirname+'/.env'
+});
 
 /*
 	TO RUN WITH SERVER
@@ -8,8 +11,9 @@
 const { spawn } = require('child_process');
 
 const sub = spawn(process.argv[0], [__dirname + '/server'], {
-      stdio: [ 'pipe', 'pipe', 'pipe', 'ipc'  ]
-    });
+	cwd: __dirname+'/server',
+	env: process.env
+});
 
 const asyncHooks = require('async_hooks');
 const context = require('./classes/Context');

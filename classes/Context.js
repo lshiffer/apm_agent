@@ -8,7 +8,7 @@ class Context {
 	}
 
 	init(asyncID, type, triggerAsyncID) {
-		if (this.context.has(triggerAsyncID))
+		if (this.context.has(triggerAsyncID)) 
 			this.context.set(asyncID, this.context.get(triggerAsyncID));
 	}
 

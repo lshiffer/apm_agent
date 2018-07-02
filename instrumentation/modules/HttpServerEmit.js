@@ -1,5 +1,5 @@
 'use strict';
-require('express');
+
 const asyncHooks = require('async_hooks');
 const http = require('http');
 const perfHook = require('perf_hooks');
@@ -19,9 +19,7 @@ http.Server.prototype.emit = function(type) {
 		res.setHeader('uuid', req.agent.uuid)
 
 		perfHook.performance.mark('start - ' + req.agent.uuid);
-
 		let data = new Agent_Data(req.agent.uuid, req.url, req.method);
-
 		measure.start(req, data);
 
 		res.on('finish', () => {
@@ -30,12 +28,8 @@ http.Server.prototype.emit = function(type) {
 			perfHook.performance.measure('request - ' + req.agent.uuid, 'start - ' + req.agent.uuid, 'end - ' + req.agent.uuid);
 			let endMeasure = perfHook.performance.getEntriesByName('request - ' + req.agent.uuid)[0];
 
-			perfHook.performance.clearMarks('start - ' + req.agent.uuid);
-			perfHook.performance.clearMarks('end - ' + req.agent.uuid);
-			perfHook.performance.clearMeasures('request - ' + req.agent.uuid);
-
+			clearPerformanceMarks(req.agent.uuid);
 			data.setDuration(endMeasure.duration);
-
 			measure.stop(req);
 		});
 
@@ -44,4 +38,10 @@ http.Server.prototype.emit = function(type) {
 	}
 
 	return emit.apply(this, arguments);
+}
+
+function clearPerformanceMarks(uuid) {
+	perfHook.performance.clearMarks('start - ' + uuid);
+	perfHook.performance.clearMarks('end - ' + uuid);
+	perfHook.performance.clearMeasures('request - ' + uuid);
 }

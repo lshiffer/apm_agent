@@ -2,7 +2,9 @@
 var socket;
 
 async function init() {
-	socket = io.connect(':'+3200);
+	let port = await fetch('/socketPort');
+	port = await port.text();
+	socket = io.connect(':'+port);
 
 	socketListener();
 }
