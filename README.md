@@ -8,8 +8,8 @@ After cloning ```apm_agent``` to your target system follow the steps below....
 
 ###  Prerequisites
 -  Node v8 and NPM installed on the system.
--  A Node webapp
--  Ports ```31000``` and ```3200``` available on the target domain (These can be changed, see below).
+-  A Node webapp (Tested with Express and Hapi Node webapps)
+-  Ports ```31000``` and ```3200``` available on the target domain (These can be changed in the ```.env``` file).
 
 Once those three conditions are met, run ```npm install``` from the root ```apm_agent``` directory. 
 
@@ -32,19 +32,29 @@ Add that line to the top of your webapp's entry file.  To do even better, create
 
 Of course, be sure the path to the root ```apm_agent``` is correct.  For instance:  ```require('./../../apm_agent');```
 
-##### Now that the agent is running...
-You can visit ```localhost:3100``` to view events as they happen.  To trigger an event, simply visit your webapp and click some links or call some APIs.  Be sure to substitute ```localhost``` for whatever the domain is running on. 
+#### Now that the agent is running...
+You can visit ```localhost:3100``` (or the APP_PORT set in ```.env```) to view events as they happen.  To trigger an event, simply visit your webapp and click some links or call some APIs.  Be sure to substitute ```localhost``` for whatever the domain is running on. 
 
 You can also view the logs in ```agent_log.json``` located in the root directory of ```apm_agent```.
 
+*** The viewer has only been tested on Chrome. ***
+
 
 ##  About apm_agent 
-apm_agent is a foundation to build upon to monitor a Node applications performance management.  This foundation listens for http requests to capture data and instrument responses.  Each request is monitored to capture the total number of String objects that are created, the duration of request to response time, and how much memory is consumed to respond to the request.  Additionally, each request is instrumented to include a UUID.
+apm_agent is a foundation to build upon to monitor a Node applications performance management (as well as monitor for possible threats).  This foundation listens for http requests to capture data and instrument responses.  Each request is monitored to capture the total number of String objects that are created, the duration of request to response time, and how much memory is consumed to respond to the request.  Additionally, each request is instrumented to include a UUID.
 
 ###  Technical Overview
+
+#### High Level
+The app is basically two in one.  Foremost, we have an agent that monitors a Node webapp.  This is done using ```async_hooks``` to capture high-level events that are then processed, such as HTTP requests.  We then override Node's ```HTTP.Server.emit``` to intercept HTTP requests where we start our data collection for that specific request.  The measurements end once we are notified that a response had been sent out.  
+
+Secondly, there is a server to allow for remote viewing of these captured request/response events.  This server is run on a second process to not capture it's own data.  Ideally, this server would exist on it's own but for simplicity is wrapped within this app. 
+
+Following are descriptions for the individual files. 
+
 -  ```index.js```
 
-Entry point to the agent.  A child process is spawned to host the server to view the live logging.  Instrumentation is enabled to capture String objects being created as well as listen for HTTP requests.  Hooks are created to capture the context of each request that comes in. 
+Entry point to the agent.  A child process is spawned to host the server to view the live logging.  Instrumentation is enabled to capture String objects being created as well as listen for HTTP requests.  Hooks are created to capture async events as they occur. 
 
 -  ```/instrumentation```
 
@@ -56,7 +66,7 @@ Creates a proxy for the String construtor.  Each String object that is created w
 
 -  ```/instrumentation/modules/HttpServerEmit.js```
 
-Overrides Node's Http emit property.  Similar to how String.js uses a proxy to listen for the String object constructor, HttpServerEmit redefines the built-in ```http.Server.prototype.emit``` to capture each request that comes in.  For each request a UUID is assigned, an ```Agent_Data``` object is created for that request, and a measurement is started.  Additionally, a callback is created for the http response...  Once the callback occurs, the measurements are stopped (to get the time duration) and the memory usage is captured.  Both are stored in the ```Agent_Data``` object. 
+Overrides Node's Http emit property.  Similar to how String.js uses a proxy to listen for the String object constructor, HttpServerEmit redefines the built-in ```http.Server.prototype.emit``` to capture each request that comes in.  For each request a UUID is assigned, an ```Agent_Data``` object is created for that request, and a measurement is started (with time duration being tracked using Node's built-in Performance Timing API.  Additionally, a callback is created for the http response...  Once the callback occurs, the measurements are stopped (to get the time duration) and the memory usage is captured.  Both are stored in the ```Agent_Data``` object. 
 
 -  ```/classes/Agent_Data.js```
 
@@ -64,11 +74,11 @@ A class for storing data.  Each request/response's measurements and identifying 
 
 -  ```/classes/Context.js```
 
-A singleton class.  Context stores and manages the context for each request/response.  
+A singleton module.  Context stores and manages the context for each request/response.  
 
 -  ```/classes/Measure.js```
 
-A singleton class.  Measure stores the ```Agent_Data``` object for each request/response for the respective context.  Measure is also responsible for writing the ```Agent_Data``` out to file once a response is returned as well as sending the data to the ```APM Agent Viewer```.
+A singleton module.  Measure stores the ```Agent_Data``` object for each request/response for the respective context.  Measure is also responsible for writing the ```Agent_Data``` out to file once a response is returned as well as sending the data to the ```APM Agent Viewer```.  As the viewing server runs on a separate process, data is relayed to the server using sockets. 
 
 -  ```/server```
 
@@ -76,7 +86,7 @@ Everything related to the server for viewing the live data is stored within this
 
 -  ```/server/index.js```
 
-Starts the server.  The socket and host port are currently hard-coded here 3200 and 3100.  These can be adjusted (or better, replace with environment variables as to adjust these here, an update is also required in /classes/Measure.js and /public/scripts/main.js!).
+Starts the server.  The socket and host port are set by default to 3200 and 3100.  These can be adjusted by changing their values in ```.env```.
 
 -  ```/server/views/```
 
@@ -88,7 +98,7 @@ Sets up the socket server to listen for new data and to also send that data to a
 
 -  ```/server/routes```
 
-Routes for the server.  Currently only a GET for the index.
+Routes for the server.  A GET for the index and a GET for the socket port. 
 
 -  ```/server/public/scripts/main.js```
 
@@ -118,7 +128,7 @@ Tests the integration of the entire ```apm_agent``` together.
 ##  Room To Improve
 There are many possibilities to be built upon this foundation.  But there are some key improvements....
 
-####  Save to persistent storage
+####  Save to Persistent Storage
 Data is currently logged to a file and streamed to any connected clients.  A better solution would be to store this data in a DB for faster look up and searching.  Additionally, providing a 'From' and 'To' on the client to look up logs based on a date range. 
 
 ####  String Counts
