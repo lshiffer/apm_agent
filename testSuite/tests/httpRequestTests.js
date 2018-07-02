@@ -17,58 +17,58 @@ describe('HTTP Server Emit', function() {
 	after(() => { server.close(); });
 
 	it('Should know a new GET request came in', async function() {
-		await fetch('http://localhost:' + port);
+		await fetch(process.env.SERVER_DOMAIN + ':' + port);
 		expect(context.context.values().next().value).to.have.own.property('agent');
 	});
 
 	it('GET response should have a UUID', async function() {
-		await fetch('http://localhost:' + port);
+		await fetch(process.env.SERVER_DOMAIN + ':' + port);
 		expect(context.context.values().next().value.agent).to.have.own.property('uuid');
 	});
 
 	it('Should know if multiple GET requests came in', async function() {
-		fetch('http://localhost:' + port);
-		fetch('http://localhost:' + port);
-		await fetch('http://localhost:' + port);
+		fetch(process.env.SERVER_DOMAIN + ':' + port);
+		fetch(process.env.SERVER_DOMAIN + ':' + port);
+		await fetch(process.env.SERVER_DOMAIN + ':' + port);
 		expect(context.context.size).to.be.equal(3);
 	});
 
 	it('Should know a new POST request came in', async function() {
-		await fetch('http://localhost:' + port, {
+		await fetch(process.env.SERVER_DOMAIN + ':' + port, {
 			method: 'POST'
 		});
 		expect(context.context.values().next().value).to.have.own.property('agent');
 	});
 
 	it('POST response should have a UUID', async function() {
-		await fetch('http://localhost:' + port, {
+		await fetch(process.env.SERVER_DOMAIN + ':' + port, {
 			method: 'POST'
 		});
 		expect(context.context.values().next().value.agent).to.have.own.property('uuid');
 	});
 
 	it('Should know if multiple GET requests came in', async function() {
-		fetch('http://localhost:' + port, {
+		fetch(process.env.SERVER_DOMAIN + ':' + port, {
 			method: 'POST'
 		});
-		fetch('http://localhost:' + port, {
+		fetch(process.env.SERVER_DOMAIN + ':' + port, {
 			method: 'POST'
 		});
-		await fetch('http://localhost:' + port, {
+		await fetch(process.env.SERVER_DOMAIN + ':' + port, {
 			method: 'POST'
 		});
 		expect(context.context.size).to.be.equal(3);
 	});
 
 	it('Should know if multiple GET/POST requests came in', async function() {
-		fetch('http://localhost:' + port, {
+		fetch(process.env.SERVER_DOMAIN + ':' + port, {
 			method: 'POST'
 		});
-		fetch('http://localhost:' + port, {
+		fetch(process.env.SERVER_DOMAIN + ':' + port, {
 			method: 'POST'
 		});
-		fetch('http://localhost:' + port);
-		await fetch('http://localhost:' + port);
+		fetch(process.env.SERVER_DOMAIN + ':' + port);
+		await fetch(process.env.SERVER_DOMAIN + ':' + port);
 		expect(context.context.size).to.be.equal(4);
 	});
 });

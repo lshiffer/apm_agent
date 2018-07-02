@@ -19,12 +19,12 @@ describe('Integration Testing', function() {
 	after(async () => { server.close(); });
 
 	it('Should mark GET responses with a UUID', async function() {
-		let r = await fetch('http://localhost:' + port);
+		let r = await fetch(process.env.SERVER_DOMAIN + ':' + port);
 		expect(r.headers.get('uuid')).to.exist;
 	});
 
 	it('Should mark POST responses with a UUID', async function() {
-		let r = await fetch('http://localhost:' + port, {
+		let r = await fetch(process.env.SERVER_DOMAIN + ':' + port, {
 			method: 'POST'
 		});
 		expect(r.headers.get('uuid')).to.exist;
@@ -42,7 +42,7 @@ describe('Integration Testing', function() {
 	Reason for this 5-in-1 is to read the log file once. 
 	*/
 	it('Should log all data (5 tests in one)', async function() {
-		await fetch('http://localhost:' + port);
+		await fetch(process.env.SERVER_DOMAIN + ':' + port);
 		measure.closeFileStream();
 		let logs = await fs.readFileSync('./' + process.env.LOG_FILE_NAME);
 		let data = JSON.parse(await logs.toString('utf8').slice(0, -2) + "]");

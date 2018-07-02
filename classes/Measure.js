@@ -3,7 +3,7 @@
 const Fs = require('fs');
 const Path = require('path');
 const io = require('socket.io-client');
-const socket = io.connect('http://localhost:'+process.env.SOCKET_PORT);
+const socket = io.connect(process.env.SERVER_DOMAIN + ':' + process.env.SOCKET_PORT);
 
 const LOG_FILE_NAME = process.env.LOG_FILE_NAME;
 
